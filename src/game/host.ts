@@ -23,6 +23,7 @@ export class GameHost {
       roomCode,
       hostId: 'host',
       roundResults: null,
+      roundCount: 0,
     };
 
     this.addPlayer('host', hostName);
@@ -106,6 +107,7 @@ export class GameHost {
       this.startRound();
     } else if (data.type === 'PLAY_AGAIN' && peerId === 'host' && this.state.phase === 'GAME_OVER') {
       this.state.blocks = this.getInitialBlocks();
+      this.state.roundCount = 0;
       Object.values(this.state.players).forEach(p => p.score = 0);
       this.startRound();
     }
@@ -482,6 +484,7 @@ export class GameHost {
   }
 
   startRound() {
+    this.state.roundCount++;
     this.state.blocks.forEach(b => b.pickedUp = false);
     const players = Object.values(this.state.players);
     players.forEach((p, idx) => {
@@ -527,7 +530,7 @@ export class GameHost {
       blocks.push({ type: 'COIN', w: 1, h: 1, shape: 'rect', selectedBy: null });
     }
     
-    if (Math.random() < 0.5) {
+    if (this.state.roundCount > 12 || Math.random() < 0.5) {
       const bombSizes = [{w:1,h:1}, {w:2,h:2}, {w:3,h:3}];
       const size = bombSizes[Math.floor(Math.random() * bombSizes.length)];
       blocks.push({ type: 'BOMB', w: size.w, h: size.h, shape: 'rect', selectedBy: null });
@@ -657,8 +660,14 @@ export class GameHost {
     const finished = players.filter(p => p.hasFinished).sort((a, b) => a.finishTime - b.finishTime);
     
     let multiplier = 1;
-    if (finished.length === 0) multiplier = 0;
-    else if (finished.length === players.length && players.length > 0) multiplier = 0.1;
+    const isShowdown = this.state.roundCount > 12;
+    
+    if (isShowdown) {
+      multiplier = 2;
+    } else {
+      if (finished.length === 0) multiplier = 0;
+      else if (finished.length === players.length && players.length > 0) multiplier = 0.1;
+    }
     
     const results: any = {};
     players.forEach(p => results[p.id] = { points: 0, details: [] });
@@ -683,7 +692,9 @@ export class GameHost {
       results[p.id].points += finalPts;
       results[p.id].details.push(...details);
       
-      if (multiplier === 0.1) {
+      if (isShowdown) {
+        results[p.id].details.push(`决战模式倍率: x2 = +${finalPts.toFixed(2)}`);
+      } else if (multiplier === 0.1) {
         results[p.id].details.push(`太简单了！全员通过倍率: x0.1 = +${finalPts.toFixed(2)}`);
       } else if (multiplier !== 1) {
         results[p.id].details.push(`全员/无人到达倍率: x${multiplier} = +${finalPts.toFixed(2)}`);
