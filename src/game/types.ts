@@ -58,4 +58,5 @@ export interface GameState {
   roomCode: string;
   hostId: string;
   roundResults: any;
+  roundCount: number;
 }
