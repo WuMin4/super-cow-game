@@ -323,12 +323,12 @@ export class GameHost {
         continue;
       }
 
-      let friction = 0.95;
+      let friction = 0.9;
       if (p.onGround) {
-        friction = p.groundType === 'ICE' ? 0.98 : 0.9;
+        friction = p.groundType === 'ICE' ? 0.97 : 0.85;
       }
 
-      const accel = p.onGround ? 0.03 : 0.015;
+      const accel = p.onGround ? 0.05 : 0.025;
       if (p.inputs.left) p.vx -= accel;
       if (p.inputs.right) p.vx += accel;
 
