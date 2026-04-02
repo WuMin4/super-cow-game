@@ -328,7 +328,7 @@ export class GameHost {
         friction = p.groundType === 'ICE' ? 0.98 : 0.9;
       }
 
-      const accel = p.onGround ? 0.035 : 0.0175;
+      const accel = p.onGround ? 0.03 : 0.015;
       if (p.inputs.left) p.vx -= accel;
       if (p.inputs.right) p.vx += accel;
 
@@ -359,8 +359,8 @@ export class GameHost {
       }
       
       p.vx *= friction;
-      if (p.vx > 0.35) p.vx = 0.35;
-      if (p.vx < -0.35) p.vx = -0.35;
+      if (p.vx > 0.28) p.vx = 0.28;
+      if (p.vx < -0.28) p.vx = -0.28;
 
       let grav = 0.02;
       if (p.inputs.jump && p.vy < 0) grav = 0.01;
@@ -369,7 +369,7 @@ export class GameHost {
       if (p.vy < -0.6) p.vy = -0.6;
 
       if (p.inputs.jump && p.onGround && !p.jumpHeld) {
-        p.vy = -0.4;
+        p.vy = -0.38;
         p.onGround = false;
       }
       p.jumpHeld = p.inputs.jump;
