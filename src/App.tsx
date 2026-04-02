@@ -44,12 +44,9 @@ export default function App() {
       if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.right = true;
       if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') keys.jump = true;
       if (e.key === 'r' || e.key === 'R') {
-        if (gameState?.phase === 'PLACEMENT') {
-          if (isHost) hostRef.current?.handleMessage('host', { type: 'ROTATE_BLOCK' });
-          else clientRef.current?.send({ type: 'ROTATE_BLOCK' });
-        } else if (gameState?.phase === 'PLAY') {
-          keys.giveUp = true;
-        }
+        if (isHost) hostRef.current?.handleMessage('host', { type: 'ROTATE_BLOCK' });
+        else clientRef.current?.send({ type: 'ROTATE_BLOCK' });
+        keys.giveUp = true;
       }
     };
     const handleKeyUp = (e: KeyboardEvent) => {
