@@ -346,7 +346,14 @@ export default function App() {
     <div className="min-h-screen bg-gray-900 flex flex-col items-center py-8 overflow-x-auto">
       <div className="w-full max-w-[1800px] mb-4 bg-gray-800 p-4 rounded-lg shadow-lg">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-white font-bold text-xl">房间号: {gameState?.roomCode}</h2>
+          <div className="flex items-center gap-4">
+            <h2 className="text-white font-bold text-xl">房间号: {gameState?.roomCode}</h2>
+            {gameState && (
+              <div className={`px-3 py-1 rounded text-sm font-bold ${gameState.roundCount > 12 ? 'bg-red-600 text-white animate-pulse' : 'bg-blue-600 text-white'}`}>
+                第 {gameState.roundCount} 回合 {gameState.roundCount > 12 && '(决战模式)'}
+              </div>
+            )}
+          </div>
           <div className="text-white">阶段: {
             gameState?.phase === 'LOBBY' ? '等待开始' :
             gameState?.phase === 'SELECTION' ? '选择方块' :
@@ -385,8 +392,20 @@ export default function App() {
 
         {/* Overlays */}
         {gameState?.phase === 'LOBBY' && (
-          <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center rounded-lg">
-            <h2 className="text-white text-3xl font-bold mb-8">等待玩家加入...</h2>
+          <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center rounded-lg p-6">
+            <h2 className="text-white text-3xl font-bold mb-4">等待玩家加入...</h2>
+            
+            <div className="bg-gray-800/80 p-6 rounded-xl border border-gray-600 max-w-lg mb-8">
+              <h3 className="text-blue-400 font-bold mb-2 text-lg">游戏说明</h3>
+              <ul className="text-gray-200 text-sm space-y-2 list-disc list-inside">
+                <li>这是一个多人协作/竞争的平台跳跃游戏。</li>
+                <li>每回合玩家先选择一个方块，然后将其放置在地图上。</li>
+                <li>目标是到达终点旗帜。第一个到达或携带金币可获得更多积分。</li>
+                <li>如果所有人都到达，得分倍率会大幅降低（太简单了！）。</li>
+                <li><b>决战模式：</b>12回合后开启。每回合固定刷新炸弹，且得分倍率固定为2倍。</li>
+              </ul>
+            </div>
+
             <div className="flex space-x-4 mb-8">
               {(Object.values(gameState.players) as Player[]).map(p => (
                 <div key={p.id} className="px-4 py-2 rounded-full text-white font-bold" style={{ backgroundColor: p.color }}>
